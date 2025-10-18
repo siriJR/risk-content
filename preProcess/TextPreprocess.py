@@ -344,7 +344,7 @@ class TextPreprocess:
         keyWords={
             "meizi": "妹子", "koukou": "qq", "weixin": "微信", "jiawei": "加微信", "jiawo": "加我微信",
             "haowan": "好玩", "meizhi": "妹子", "meinv": "美女", "meilv": "美女", "ca": "操", "cao": "操", "qiuqiu": "qq",
-            "keke": "qq","caonima":"操你妈","nima":"你妈的","kangkang":"看看","jiahui":"加微信","cu":"蓝伴"
+            "keke": "qq","caonima":"操你妈","nima":"你妈的","kangkang":"看看","jiahui":"加微信"
 
         }
         for i in keyWords.keys():
