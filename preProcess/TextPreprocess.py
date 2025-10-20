@@ -6,12 +6,39 @@ import emoji
 import unicodedata
 from .langconv import Converter
 from .pinyinyLocal import PinyinyLocal
+import glob
+import os
+
+
 
 class TextPreprocess:
 
     def __init__(self):
         self.py = PinyinyLocal()
+        self.stopwords_set=self.load_all_stopwords()
 
+    def load_all_stopwords(self):
+        """加载所有停用词文件"""
+        stopwords = set()
+        file_patterns = ["*stopwords*.txt", "*stopword*.txt"]
+
+        all_files = set()
+        for pattern in file_patterns:
+            all_files.update(glob.glob(pattern))
+
+        for file_path in all_files:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        word = line.strip()
+                        if word:
+                            stopwords.add(word)
+                print(f"成功加载: {file_path}")
+            except Exception as e:
+                print(f"加载失败 {file_path}: {e}")
+
+        print(f"总共加载 {len(stopwords)} 个停用词")
+        return stopwords
 
     #特定字符替换
     def strtr(self,text, replace):
@@ -48,7 +75,7 @@ class TextPreprocess:
         return new_sentence
 
 
-    def stopWordCase(self,text):
+    def stopWordCase(self,text,local_words=True):
         """
         去掉停用词
         :param text:
@@ -103,7 +130,12 @@ class TextPreprocess:
             '《': '',
             '》': ''
         }
-        return self.strtr(text, stopwords_dict)
+        text= self.strtr(text, stopwords_dict)
+        if local_words:
+            tokens = re.findall(r'\w+|[^\w\s]', text)
+            filtered_tokens = [token for token in tokens if token not in self.stopwords_set]
+            text=''.join(filtered_tokens)
+        return text
 
 
     def sbcCase(self,text):
@@ -344,7 +376,7 @@ class TextPreprocess:
         keyWords={
             "meizi": "妹子", "koukou": "qq", "weixin": "微信", "jiawei": "加微信", "jiawo": "加我微信",
             "haowan": "好玩", "meizhi": "妹子", "meinv": "美女", "meilv": "美女", "ca": "操", "cao": "操", "qiuqiu": "qq",
-            "keke": "qq","caonima":"操你妈","nima":"你妈的","kangkang":"看看","jiahui":"加微信"
+            "keke": "qq","caonima":"操你妈","nima":"你妈的","kangkang":"看看","jiahui":"加微信","cu":"蓝伴"
 
         }
         for i in keyWords.keys():
@@ -454,7 +486,7 @@ class TextPreprocess:
         text = self.bracketCase(text)
         text = self.specialCase(text)
         ## 去掉停用词
-        #text = self.stopWordCase(text)
+        text = self.stopWordCase(text)
         #繁体转简体
         #text = self.Traditional2Simplified(text)
         #检测拼音当中是否有关键词--有些耗时
