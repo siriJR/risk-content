@@ -721,7 +721,7 @@ if __name__ == "__main__":
     analyzer = ChatTopicAnalyzer(model_name='BAAI/bge-base-zh')
 
     # 1. 加载数据
-    csv_file = '2025-10-16_presto_80479171.csv'
+    csv_file = 'test.csv'#包含有msg字段
     df = analyzer.load_data(csv_file)
 
     # 2. 生成嵌入向量
